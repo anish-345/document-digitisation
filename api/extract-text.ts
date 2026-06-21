@@ -99,7 +99,17 @@ CRITICAL INSTRUCTIONS:
       throw lastError || new Error("All fallback models failed.");
     }
 
-    const outputText = responseData.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    const candidate = responseData.candidates?.[0];
+    if (!candidate || !candidate.content) {
+      console.error("Gemini API returned no content:", JSON.stringify(responseData, null, 2));
+      throw new Error(
+        responseData.promptFeedback?.blockReason 
+          ? `Blocked by safety filters: ${responseData.promptFeedback.blockReason}`
+          : "The AI model returned an empty response. Please try again."
+      );
+    }
+
+    const outputText = candidate.content.parts?.[0]?.text ?? '';
     
     res.json({
       text: outputText.trim(),

@@ -619,7 +619,15 @@ export default function App() {
                         </div>
                         <div className="flex-1 p-6 overflow-auto">
                           <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 min-h-full whitespace-pre-wrap font-mono text-[13px] leading-loose text-slate-800">
-                            {rawTextData.text}
+                            {rawTextData.text ? (
+                              rawTextData.text
+                            ) : (
+                              <div className="flex flex-col items-center justify-center text-center h-full text-slate-400">
+                                <FileText className="w-10 h-10 mb-2 opacity-50" />
+                                <p className="font-bold">No readable text found</p>
+                                <p className="text-xs max-w-[200px] mx-auto mt-1">The AI could not identify any text in the provided document.</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
