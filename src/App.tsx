@@ -26,7 +26,8 @@ import {
   Copy,
   FileText,
   Moon,
-  Sun
+  Sun,
+  Home
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
@@ -472,10 +473,20 @@ export default function App() {
 
               <button
                 onClick={reset}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
+                title="Return to Home / Upload New Document"
+              >
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">Upload New</span>
+              </button>
+
+              <button
+                onClick={reset}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                title="Clear Workspace"
               >
                 <Trash2 className="w-4 h-4" />
-                Clear
+                <span className="hidden sm:inline">Clear</span>
               </button>
 
               <div className="relative group/export">
