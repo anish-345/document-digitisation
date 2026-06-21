@@ -516,19 +516,28 @@ export default function App() {
                   exit={{ opacity: 0, y: -20 }}
                   className="max-w-3xl mx-auto"
                 >
-                  <div className="text-center mb-10">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="text-center mb-10"
+                  >
                     <h2 className="text-5xl md:text-6xl font-display font-bold text-slate-900 mb-6 tracking-tight">Turn documents into <span className="text-indigo-600">structured data.</span></h2>
                     <p className="text-lg text-slate-500 max-w-xl mx-auto">Fast, accurate extraction engine. Process invoices, receipts, and handwritten notes into structured formats instantly.</p>
-                  </div>
+                  </motion.div>
 
                   {files.length === 0 ? (
-                    <div
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1, duration: 0.4 }}
                       {...getRootProps()}
-                      className={`border-2 border-dashed rounded-2xl p-16 text-center transition-all cursor-pointer bg-white group
-                        ${isDragActive ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 hover:border-slate-400'}`}
+                      className={`relative border-2 border-dashed rounded-2xl p-16 text-center transition-all cursor-pointer bg-white group overflow-hidden
+                        ${isDragActive ? 'border-indigo-500 bg-indigo-50/50 scale-[1.02] shadow-xl shadow-indigo-500/10' : 'border-slate-200 hover:border-slate-400 hover:shadow-lg hover:shadow-slate-200/50'}`}
                     >
+                      {isDragActive && <div className="absolute inset-0 rounded-2xl animate-pulse-border border-4 border-indigo-400/50" />}
                       <input {...getInputProps()} />
-                      <div className="bg-slate-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-50 transition-colors">
+                      <div className="bg-slate-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-50 transition-colors relative z-10">
                         <Upload className="text-slate-400 group-hover:text-indigo-600 w-10 h-10 transition-colors" />
                       </div>
                       <p className="text-xl font-semibold text-slate-900 mb-2">Drop your documents here</p>
@@ -606,7 +615,7 @@ export default function App() {
                       <button
                         onClick={() => processFiles()}
                         disabled={isProcessing}
-                        className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-500 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white py-4 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-[0.98] group relative overflow-hidden"
+                        className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-500 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white py-4 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-[0.98] group relative overflow-hidden shimmer-effect"
                       >
                         {isProcessing && (
                           <div 
