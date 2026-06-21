@@ -30,13 +30,14 @@ export default async function handler(req: any, res: any) {
         return res.status(400).json({ error: "No files uploaded" });
       }
 
-      const prompt = `You are a precision multilingual data extraction engine. Analyze the attached document parts (multiple pages or files).
+      const prompt = `You are a precision multilingual data extraction engine. Analyze the attached document parts.
       
       TASK:
       1. Extract ALL tabular data, line items, and headers.
-      2. SYNTHESIZE: If documents are multiple pages of one file, merge them into a SINGLE logical structured dataset.
-      3. MULTILINGUAL: Detect and translate key headers to English if helpful, but preserve original text for specific item names/values.
-      4. ACCURACY: Be extremely precise with numbers and dates.
+      2. IF THE DOCUMENT IS NOT A TRADITIONAL TABLE (e.g. a letter, a receipt, or notes), you MUST extract the key entities (like Names, Dates, Amounts, Subjects, Key Points) and organize them into a table format with appropriate columns.
+      3. SYNTHESIZE: If documents are multiple pages, merge them into a SINGLE logical structured dataset.
+      4. MULTILINGUAL: Detect and translate key headers to English if helpful, but preserve original text for specific item values.
+      5. ACCURACY: Be extremely precise. NEVER return an "Error" column. If there's barely any data, just create a "Key Point" and "Details" column.
       
       Output JSON strictly following the schema.`;
 

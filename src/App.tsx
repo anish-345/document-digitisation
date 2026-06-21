@@ -633,35 +633,37 @@ export default function App() {
                           <p className="text-xs text-slate-400">Double click cells to edit</p>
                         </div>
 
-                        <div className="flex-1 overflow-auto">
-                          <table className="w-full border-collapse text-sm">
-                            <thead className="sticky top-0 z-10 bg-slate-50 border-b">
-                              <tr>
-                                {data.columns.map((column) => (
-                                  <th key={column} className="px-4 py-3 text-left font-semibold text-slate-600 border-r last:border-r-0 min-w-[150px]">
-                                    {column}
-                                  </th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {data.rows.map((row, rowIndex) => (
-                                <tr key={rowIndex} className="border-b hover:bg-indigo-50/30 transition-colors group">
+                        {data.rows.length > 0 && (
+                          <div className="flex-1 overflow-auto">
+                            <table className="w-full border-collapse text-sm">
+                              <thead className="sticky top-0 z-10 bg-slate-50 border-b">
+                                <tr>
                                   {data.columns.map((column) => (
-                                    <td key={column} className="px-4 py-3 border-r last:border-r-0 relative group">
-                                      <input
-                                        type="text"
-                                        value={row[column] || ""}
-                                        onChange={(e) => handleCellChange(rowIndex, column, e.target.value)}
-                                        className="w-full bg-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 rounded px-1 transition-all"
-                                      />
-                                    </td>
+                                    <th key={column} className="px-4 py-3 text-left font-semibold text-slate-600 border-r last:border-r-0 min-w-[150px]">
+                                      {column}
+                                    </th>
                                   ))}
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                              </thead>
+                              <tbody>
+                                {data.rows.map((row, rowIndex) => (
+                                  <tr key={rowIndex} className="border-b hover:bg-indigo-50/30 transition-colors group">
+                                    {data.columns.map((column) => (
+                                      <td key={column} className="px-4 py-3 border-r last:border-r-0 relative group">
+                                        <input
+                                          type="text"
+                                          value={row[column] || ""}
+                                          onChange={(e) => handleCellChange(rowIndex, column, e.target.value)}
+                                          className="w-full bg-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 rounded px-1 transition-all"
+                                        />
+                                      </td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
                       </>
                     ) : (
                       <div className="flex-1 overflow-auto p-8">
