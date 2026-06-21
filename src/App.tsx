@@ -679,7 +679,7 @@ export default function App() {
                           <p className="text-sm font-medium">{error}</p>
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                   )}
                 </motion.div>
               ) : (
