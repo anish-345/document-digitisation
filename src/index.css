@@ -18,41 +18,14 @@
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid #e2e8f0;
 }
 
 .mesh-bg {
-  background-color: #f8fafc;
-  background-image: 
-    radial-gradient(at 10% 20%, hsla(250,100%,74%,0.15) 0px, transparent 50%),
-    radial-gradient(at 80% 0%, hsla(189,100%,56%,0.15) 0px, transparent 50%),
-    radial-gradient(at 0% 50%, hsla(355,100%,80%,0.15) 0px, transparent 50%),
-    radial-gradient(at 80% 50%, hsla(280,100%,74%,0.15) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, hsla(220,100%,77%,0.15) 0px, transparent 50%),
-    radial-gradient(at 80% 100%, hsla(240,100%,70%,0.15) 0px, transparent 50%);
-  background-attachment: fixed;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
-}
-
-.animate-float {
-  animation: float 5s ease-in-out infinite;
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-gradient {
-  background-size: 200% auto;
-  animation: gradient 4s linear infinite;
+  background-color: #fafafa;
+  background-image: radial-gradient(#e5e7eb 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
 }
