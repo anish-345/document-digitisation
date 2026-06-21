@@ -1,0 +1,91 @@
+import { GoogleGenAI, Type } from "@google/genai";
+import multer from "multer";
+
+const genAI = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Disable Vercel's default body parser — multer handles multipart/form-data
+export const config = {
+  api: {
+    bodyParser: false,
+    responseLimit: "50mb",
+  },
+};
+
+export default function handler(req: any, res: any) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  upload.array("files")(req, res, async (err: any) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    try {
+      const files = (req.files || []) as any[];
+
+      if (files.length === 0) {
+        return res.status(400).json({ error: "No files uploaded" });
+      }
+
+      const prompt = `You are a precision multilingual data extraction engine. Analyze the attached document parts (multiple pages or files).
+      
+      TASK:
+      1. Extract ALL tabular data, line items, and headers.
+      2. SYNTHESIZE: If documents are multiple pages of one file, merge them into a SINGLE logical structured dataset.
+      3. MULTILINGUAL: Detect and translate key headers to English if helpful, but preserve original text for specific item names/values.
+      4. ACCURACY: Be extremely precise with numbers and dates.
+      
+      Output JSON strictly following the schema.`;
+
+      const response = await genAI.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: [
+          {
+            role: "user",
+            parts: [
+              { text: prompt },
+              ...files.map((file) => ({
+                inlineData: {
+                  data: file.buffer.toString("base64"),
+                  mimeType: file.mimetype,
+                },
+              })),
+            ],
+          },
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              columns: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+              },
+              rows: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  additionalProperties: { type: Type.STRING },
+                },
+              },
+            },
+            required: ["columns", "rows"],
+          },
+        },
+      });
+
+      const outputText = response.text ?? '{"columns":[], "rows":[]}';
+      const extraction = JSON.parse(outputText);
+      res.json(extraction);
+    } catch (error: any) {
+      console.error("Extraction error:", error);
+      res.status(500).json({ error: error.message || "Failed to process document" });
+    }
+  });
+}

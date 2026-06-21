@@ -1,32 +1,21 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "vite build",
+  "outputDirectory": "dist",
+  "rewrites": [
     {
-      "src": "server.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 60
-      }
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "server.ts"
+  "functions": {
+    "api/process.ts": {
+      "maxDuration": 60
     },
-    {
-      "handle": "filesystem"
+    "api/analyze.ts": {
+      "maxDuration": 60
     },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+    "api/export.ts": {
+      "maxDuration": 30
     }
-  ]
+  }
 }
