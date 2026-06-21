@@ -777,10 +777,10 @@ export default function App() {
                       </div>
                     ) : workbenchTab === 'data' && data ? (
                       <>
-                        <div className="p-4 border-b bg-white flex items-center justify-between">
+                        <div className="p-4 border-b bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <TableIcon className="w-5 h-5 text-indigo-600" />
-                            <p className="text-sm font-bold text-slate-700 uppercase tracking-wider">Smart Extraction Grid</p>
+                            <TableIcon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Smart Extraction Grid</p>
                           </div>
                           <p className="text-xs text-slate-400">Double click cells to edit</p>
                         </div>
@@ -788,10 +788,10 @@ export default function App() {
                         {data.rows.length > 0 && (
                           <div className="flex-1 overflow-auto">
                             <table className="w-full border-collapse text-sm">
-                              <thead className="sticky top-0 z-10 bg-slate-50 border-b">
+                              <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
                                 <tr>
                                   {data.columns.map((column) => (
-                                    <th key={column} className="px-4 py-3 text-left font-semibold text-slate-600 border-r last:border-r-0 min-w-[150px]">
+                                    <th key={column} className="px-4 py-3 text-left font-semibold text-slate-600 dark:text-slate-300 border-r border-slate-200 dark:border-slate-800 last:border-r-0 min-w-[150px]">
                                       {column}
                                     </th>
                                   ))}
@@ -799,14 +799,14 @@ export default function App() {
                               </thead>
                               <tbody>
                                 {data.rows.map((row, rowIndex) => (
-                                  <tr key={rowIndex} className="border-b hover:bg-indigo-50/30 transition-colors group">
+                                  <tr key={rowIndex} className="border-b border-slate-200 dark:border-slate-800 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/30 transition-colors group">
                                     {data.columns.map((column) => (
-                                      <td key={column} className="px-4 py-3 border-r last:border-r-0 relative group">
+                                      <td key={column} className="px-4 py-3 border-r border-slate-200 dark:border-slate-800 last:border-r-0 relative group">
                                         <input
                                           type="text"
                                           value={row[column] || ""}
                                           onChange={(e) => handleCellChange(rowIndex, column, e.target.value)}
-                                          className="w-full bg-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 rounded px-1 transition-all"
+                                          className="w-full bg-transparent text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 rounded px-1 transition-all"
                                         />
                                       </td>
                                     ))}
@@ -828,23 +828,23 @@ export default function App() {
                         ) : analysis ? (
                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                             <div>
-                              <h3 className="text-sm font-bold text-indigo-600 uppercase tracking-widest mb-2">Executive Summary</h3>
-                              <p className="text-lg text-slate-700 leading-relaxed font-medium">{analysis.summary}</p>
+                              <h3 className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-2">Executive Summary</h3>
+                              <p className="text-lg text-slate-700 dark:text-slate-200 leading-relaxed font-medium">{analysis.summary}</p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               {analysis.metrics.map((metric, i) => (
-                                <div key={i} className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{metric.label}</p>
-                                  <p className="text-2xl font-extrabold text-slate-900 tracking-tight">{metric.value}</p>
+                                <div key={i} className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">{metric.label}</p>
+                                  <p className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{metric.value}</p>
                                   {metric.trend && <p className="text-[10px] font-bold text-green-600 mt-1 uppercase">↑ {metric.trend}</p>}
                                 </div>
                               ))}
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Categorical Distribution</h4>
+                              <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                                <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Categorical Distribution</h4>
                                 <div className="h-64">
                                   <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
@@ -869,8 +869,8 @@ export default function App() {
                                 </div>
                               </div>
 
-                              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Value Variance Analysis</h4>
+                              <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                                <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Value Variance Analysis</h4>
                                 <div className="h-64">
                                   <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={analysis.chartData}>
@@ -890,10 +890,10 @@ export default function App() {
                           </motion.div>
                         ) : (
                           <div className="h-full flex flex-col items-center justify-center text-center">
-                            <BarChart3 className="w-12 h-12 text-slate-200 mb-4" />
-                            <h3 className="text-xl font-bold text-slate-900">No Insights Available</h3>
-                            <p className="text-slate-500">Process a document to generate automated business analysis.</p>
-                            <button onClick={() => runAnalysis(data!)} className="mt-4 text-indigo-600 font-bold hover:underline">Re-run Analysis</button>
+                            <BarChart3 className="w-12 h-12 text-slate-200 dark:text-slate-700 mb-4" />
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">No Insights Available</h3>
+                            <p className="text-slate-500 dark:text-slate-400">Process a document to generate automated business analysis.</p>
+                            <button onClick={() => runAnalysis(data!)} className="mt-4 text-indigo-600 dark:text-indigo-400 font-bold hover:underline">Re-run Analysis</button>
                           </div>
                         )}
                       </div>
@@ -901,11 +901,11 @@ export default function App() {
 
                     {data?.rows.length === 0 && (
                        <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-                        <div className="bg-slate-100 p-6 rounded-full mb-4">
-                          <RefreshCw className="w-10 h-10 text-slate-300" />
+                        <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-full mb-4">
+                          <RefreshCw className="w-10 h-10 text-slate-300 dark:text-slate-600" />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900 mb-1">No data extracted</h3>
-                        <p className="text-slate-500 max-w-xs">We couldn't find a clear table. Try uploading a direct scan or photo.</p>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">No data extracted</h3>
+                        <p className="text-slate-500 dark:text-slate-400 max-w-xs">We couldn't find a clear table. Try uploading a direct scan or photo.</p>
                       </div>
                     )}
                   </div>
@@ -922,8 +922,8 @@ export default function App() {
             >
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-3xl font-display font-extrabold text-slate-900 tracking-tight mb-2">Document History</h2>
-                  <p className="text-slate-500">View and manage your previously processed documents.</p>
+                  <h2 className="text-3xl font-display font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">Document History</h2>
+                  <p className="text-slate-500 dark:text-slate-400">View and manage your previously processed documents.</p>
                 </div>
                 
                 <div className="flex items-center gap-4">
@@ -949,7 +949,7 @@ export default function App() {
                       placeholder="Search documents..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-64 text-sm"
+                      className="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-64 text-sm"
                     />
                   </div>
                 </div>
@@ -962,16 +962,16 @@ export default function App() {
                       layout
                       key={item.id}
                       onClick={() => setSelectedHistoryIds(curr => curr.includes(item.id) ? curr.filter(id => id !== item.id) : [...curr, item.id])}
-                      className={`bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md transition-all group flex items-center justify-between cursor-pointer
-                        ${selectedHistoryIds.includes(item.id) ? 'border-indigo-600 ring-4 ring-indigo-500/5 bg-indigo-50/50' : 'border-slate-200'}`}
+                      className={`bg-white dark:bg-slate-900 rounded-2xl p-5 border shadow-sm hover:shadow-md transition-all group flex items-center justify-between cursor-pointer
+                        ${selectedHistoryIds.includes(item.id) ? 'border-indigo-600 ring-4 ring-indigo-500/5 bg-indigo-50/50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-800'}`}
                     >
                       <div className="flex items-center gap-4">
-                        <div className={`p-3 rounded-xl transition-colors ${selectedHistoryIds.includes(item.id) ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                        <div className={`p-3 rounded-xl transition-colors ${selectedHistoryIds.includes(item.id) ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
                           {selectedHistoryIds.includes(item.id) ? <CheckCircle2 className="w-6 h-6" /> : <FileSpreadsheet className="w-6 h-6" />}
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{item.filename}</h3>
-                          <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                          <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">{item.filename}</h3>
+                          <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
                               {new Date(item.timestamp).toLocaleDateString()} {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
