@@ -30,16 +30,20 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ error: "No files uploaded" });
     }
 
-    const prompt = `You are a world-class Document Intelligence Expert. Analyze the following document(s), which may be typed formal documents, chaotic notes, or messy handwritten letters. Extract all the text into a clean, well-structured, and highly readable format.
+    const prompt = `You are an elite AI Document Digitization Engine. Your task is to transcribe the attached document(s) into an incredibly clean, perfectly structured Markdown format. 
 
-CRITICAL INSTRUCTIONS:
-1. PARAGRAPHS & POINTS: Organize the extracted information logically into clear paragraphs and bullet points. Do not output a giant wall of unreadable text.
-2. HANDWRITING: Use advanced OCR to accurately transcribe cursive, messy, or faded handwriting. If a word is genuinely illegible, use context to deduce it.
-3. STRUCTURE: If the document has headers, sections, or clear categories, use markdown headers (e.g., ## Header) to separate them beautifully.
-4. INTEGRITY: Preserve all important names, numbers, dates, and context. Do not summarize or delete important details; just organize them cleanly.
-5. NO HALLUCINATIONS: Do not add conversational intro/outro text (e.g. no "Here is your text").
-6. If the document is blank, output nothing.
-7. Output ONLY the beautifully structured markdown text.`;
+CRITICAL EXTRACTION RULES:
+1. PRESERVE INTENT: Read the document (whether it's a messy handwritten letter, a formal contract, or a receipt) and understand its structure.
+2. FLAWLESS FORMATTING: Use Markdown extensively.
+   - Use # headers for main titles and ## for sections.
+   - Use **bold text** for important keys, names, or totals (e.g., **Total Amount:** $500).
+   - Use bulleted lists (-) for items, tasks, or distinct points.
+   - Separate distinct ideas into clean, readable paragraphs.
+3. CONVERT CHAOS TO CLARITY: If the document is a mess of handwritten notes or scattered text, intelligently group related information together so it reads like a professionally typed summary.
+4. ABSOLUTE ACCURACY: Do not hallucinate words. If a handwritten word is completely illegible, write [illegible]. Preserve all numbers, dates, and names exactly as written.
+5. NO FLUFF: Output ONLY the requested markdown text. Do not start with "Here is the transcription..." or "Sure, I can help."
+
+Provide the beautifully digitized text below:`;
 
     const parts = [
       { text: prompt },
