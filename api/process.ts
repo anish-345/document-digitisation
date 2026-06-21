@@ -85,7 +85,14 @@ export default function handler(req: any, res: any) {
       res.json(extraction);
     } catch (error: any) {
       console.error("Extraction error:", error);
-      res.status(500).json({ error: error.message || "Failed to process document" });
+      const status = error?.status || error?.code || 500;
+      let message = error.message || "Failed to process document";
+      if (status === 429 || message.includes("RESOURCE_EXHAUSTED") || message.includes("quota")) {
+        message = "Gemini API quota exceeded. Please check your API key limits at aistudio.google.com or try again later.";
+      } else if (message.includes("API_KEY_INVALID") || message.includes("API key")) {
+        message = "Invalid Gemini API key. Please check your GEMINI_API_KEY environment variable.";
+      }
+      res.status(typeof status === 'number' ? status : 500).json({ error: message });
     }
   });
 }

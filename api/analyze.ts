@@ -77,6 +77,13 @@ export default async function handler(req: any, res: any) {
     res.json(JSON.parse(outputText));
   } catch (error: any) {
     console.error("Analysis error:", error);
-    res.status(500).json({ error: "Failed to analyze data" });
+    const status = error?.status || error?.code || 500;
+    let message = error.message || "Failed to analyze data";
+    if (status === 429 || message.includes("RESOURCE_EXHAUSTED") || message.includes("quota")) {
+      message = "Gemini API quota exceeded. Please check your API key limits or try again later.";
+    } else if (message.includes("API_KEY_INVALID") || message.includes("API key")) {
+      message = "Invalid Gemini API key. Please check your GEMINI_API_KEY environment variable.";
+    }
+    res.status(typeof status === 'number' ? status : 500).json({ error: message });
   }
 }
