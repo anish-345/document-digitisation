@@ -124,15 +124,28 @@ export default function App() {
     setIsProcessing(true);
     setError(null);
 
-    const formData = new FormData();
-    files.forEach(f => {
-      formData.append("files", f);
-    });
-
     try {
+      // Convert files to base64 — required for Vercel serverless (no raw stream for multer)
+      const filePayloads = await Promise.all(
+        files.map(async (f) => {
+          const buffer = await f.arrayBuffer();
+          const bytes = new Uint8Array(buffer);
+          let binary = "";
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          return {
+            data: btoa(binary),
+            mimeType: f.type,
+            name: f.name,
+          };
+        })
+      );
+
       const response = await fetch("/api/process", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ files: filePayloads }),
       });
 
       const contentType = response.headers.get("content-type");
@@ -143,7 +156,7 @@ export default function App() {
         } else {
           const text = await response.text();
           console.error("Non-JSON error response:", text);
-          throw new Error("Server returned an unexpected error. Please check your API key and file content.");
+          throw new Error("Server error. Please check your API key is valid and try again.");
         }
       }
 
@@ -162,6 +175,7 @@ export default function App() {
       setIsProcessing(false);
     }
   };
+
 
   const handleCellChange = (rowIndex: number, column: string, value: string) => {
     if (!data) return;
@@ -428,7 +442,7 @@ export default function App() {
                         <Upload className="text-indigo-600 w-10 h-10" />
                       </div>
                       <p className="text-xl font-semibold text-slate-900 mb-2">Drop your documents here</p>
-                      <p className="text-slate-500 text-sm">Supports multi-page PDFs, JPG, PNG (Max 10MB total)</p>
+                      <p className="text-slate-500 text-sm">Supports multi-page PDFs, JPG, PNG (Max 4MB total)</p>
                       <p className="mt-2 text-xs text-indigo-600 font-bold bg-indigo-50/50 py-1 px-3 rounded-full inline-block">Supports Multiple Files & Languages</p>
                     </div>
                   ) : (
