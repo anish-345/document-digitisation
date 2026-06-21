@@ -1,0 +1,6 @@
+{
+  "name": "Sheetify",
+  "description": "Intelligent Document Processing (IDP) SaaS tool for extracting tabular data from documents and exporting to Excel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
