@@ -30,16 +30,16 @@ export default async function handler(req: any, res: any) {
         return res.status(400).json({ error: "No files uploaded" });
       }
 
-      const prompt = `You are a precision multilingual data extraction engine. Analyze the attached document parts.
+      const prompt = `You are a world-class Document Data Extraction Engine. Analyze the attached document(s), which may be formal PDFs, images, receipts, or messy handwritten notes.
       
       TASK:
-      1. Extract ALL tabular data, line items, and headers.
-      2. IF THE DOCUMENT IS NOT A TRADITIONAL TABLE (e.g. a letter, a receipt, or notes), you MUST extract the key entities (like Names, Dates, Amounts, Subjects, Key Points) and organize them into a table format with appropriate columns.
-      3. SYNTHESIZE: If documents are multiple pages, merge them into a SINGLE logical structured dataset.
-      4. MULTILINGUAL: Detect and translate key headers to English if helpful, but preserve original text for specific item values.
-      5. ACCURACY: Be extremely precise. NEVER return an "Error" column. If there's barely any data, just create a "Key Point" and "Details" column.
+      1. EXACT TABULAR EXTRACTION: If a table exists, extract all rows, columns, and line items with 100% precision.
+      2. UNSTRUCTURED TO STRUCTURED: If the document is unstructured or handwritten (e.g., a letter, medical notes, or invoice), identify the core entities (Names, Dates, Values, Subjects, Diagnoses, Totals, etc.) and FORCE them into a clean tabular structure (e.g., "Property" and "Value" columns).
+      3. MULTI-PAGE SYNTHESIS: Seamlessly merge data across multiple pages into one unified dataset.
+      4. HANDWRITING: Use expert-level OCR to decipher cursive and poor handwriting.
+      5. FALLBACK: Never throw an error. If the document is nearly blank, output columns like "Field" and "Content" with whatever data you can find.
       
-      Output JSON strictly following the schema.`;
+      Output JSON strictly following the requested schema.`;
 
       const parts = [
         { text: prompt },
