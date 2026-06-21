@@ -2,6 +2,8 @@
 
 [![Live Demo on Vercel](https://img.shields.io/badge/Live_Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://document-digitisationn.vercel.app/)
 
+### 🔗 **[CLICK HERE TO VIEW LIVE PROJECT ON VERCEL](https://document-digitisationn.vercel.app/)** 🔗
+
 > **A Next-Generation Optical Character Recognition (OCR) and Intelligent Document Processing (IDP) platform built for speed, accuracy, and ease of use.**
 
 ---
