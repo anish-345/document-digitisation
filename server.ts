@@ -199,6 +199,8 @@ app.post("/api/export", async (req, res) => {
   }
 });
 
+export { app };
+
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -214,9 +216,12 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Sheetify.AI server running at http://localhost:${PORT}`);
-  });
+  // Only start listening if not running in a serverless environment (like Vercel)
+  if (process.env.VERCEL !== '1') {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Sheetify server running at http://localhost:${PORT}`);
+    });
+  }
 }
 
 startServer();
