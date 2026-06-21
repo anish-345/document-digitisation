@@ -33,15 +33,16 @@ export default async function handler(req: any, res: any) {
     const prompt = `You are an elite AI Document Digitization Engine. Your task is to transcribe the attached document(s) into an incredibly clean, perfectly structured Markdown format. 
 
 CRITICAL EXTRACTION RULES:
-1. PRESERVE INTENT: Read the document (whether it's a messy handwritten letter, a formal contract, or a receipt) and understand its structure.
-2. FLAWLESS FORMATTING: Use Markdown extensively.
-   - Use # headers for main titles and ## for sections.
+1. PRESERVE INTENT: Read the document (whether it's a messy handwritten letter, a formal contract, or a multi-page PDF) and understand its structure.
+2. MULTI-PAGE HANDLING: If the document contains multiple pages, you MUST explicitly separate the extraction by page. Start each page's extraction with a clear header (e.g., # Page 1, # Page 2) and ensure the layout is perfectly consistent.
+3. FLAWLESS FORMATTING: Use Markdown extensively.
+   - Use ## headers for sections within a page.
    - Use **bold text** for important keys, names, or totals (e.g., **Total Amount:** $500).
    - Use bulleted lists (-) for items, tasks, or distinct points.
    - Separate distinct ideas into clean, readable paragraphs.
-3. CONVERT CHAOS TO CLARITY: If the document is a mess of handwritten notes or scattered text, intelligently group related information together so it reads like a professionally typed summary.
-4. ABSOLUTE ACCURACY: Do not hallucinate words. If a handwritten word is completely illegible, write [illegible]. Preserve all numbers, dates, and names exactly as written.
-5. NO FLUFF: Output ONLY the requested markdown text. Do not start with "Here is the transcription..." or "Sure, I can help."
+4. CONVERT CHAOS TO CLARITY: If the document is a mess of handwritten notes or scattered text, intelligently group related information together so it reads like a professionally typed summary.
+5. ABSOLUTE ACCURACY: Do not hallucinate words. If a handwritten word is completely illegible, write [illegible]. Preserve all numbers, dates, and names exactly as written.
+6. NO FLUFF: Output ONLY the requested markdown text. Do not start with "Here is the transcription...".
 
 Provide the beautifully digitized text below:`;
 
@@ -57,14 +58,14 @@ Provide the beautifully digitized text below:`;
 
     const apiKey = process.env.GEMINI_API_KEY;
     
+    // Prioritizing 2.0-flash as it is significantly more accurate for multi-page PDFs and highly structured markdown while still being extremely fast.
     const modelsToTry = [
-      "gemini-2.0-flash-lite",
-      "gemini-flash-lite-latest",
-      "gemini-2.5-flash-lite",
+      "gemini-2.0-flash",
+      "gemini-2.5-flash",
       "gemini-3-flash-preview",
       "gemini-flash-latest",
-      "gemini-2.5-flash",
-      "gemini-2.0-flash",
+      "gemini-2.0-flash-lite",
+      "gemini-flash-lite-latest",
       "gemini-3-pro-preview"
     ];
 

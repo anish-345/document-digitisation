@@ -60,15 +60,14 @@ export default async function handler(req: any, res: any) {
 
       const apiKey = process.env.GEMINI_API_KEY;
       
-      // List of exact models found for this specific API key, prioritizing Lite and Preview models to bypass quota locks
+      // List of exact models found for this specific API key, prioritizing 2.0-flash for vastly superior accuracy and speed on tabular data
       const modelsToTry = [
-        "gemini-2.0-flash-lite",
-        "gemini-flash-lite-latest",
-        "gemini-2.5-flash-lite",
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
         "gemini-3-flash-preview",
         "gemini-flash-latest",
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-flash-lite-latest",
         "gemini-3-pro-preview"
       ];
 
