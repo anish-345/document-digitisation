@@ -329,9 +329,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="min-h-screen mesh-bg font-sans text-slate-900">
       {/* Header */}
-      <header className="border-b bg-white px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-between sticky top-0 z-10 shadow-sm gap-4 md:gap-0">
+      <header className="border-b border-white/40 glass-panel px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-between sticky top-0 z-50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] gap-4 md:gap-0">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2">
             <div className="bg-indigo-600 p-2 rounded-lg">
@@ -438,26 +438,26 @@ export default function App() {
                   className="max-w-3xl mx-auto"
                 >
                   <div className="text-center mb-10">
-                    <h2 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Turn any document into a <span className="text-indigo-600">Spreadsheet</span></h2>
-                    <p className="text-lg text-slate-600 max-w-xl mx-auto">Upload documents, invoices, or reports. Our high-performance extraction engine processes data with professional-grade precision.</p>
+                    <h2 className="text-5xl md:text-6xl font-display font-extrabold text-slate-900 mb-6 tracking-tighter">Turn any document into a <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 animate-gradient">Spreadsheet</span></h2>
+                    <p className="text-lg text-slate-600 max-w-xl mx-auto font-medium">Upload documents, invoices, or reports. Our high-performance extraction engine processes data with professional-grade precision.</p>
                   </div>
 
                   {files.length === 0 ? (
                     <div
                       {...getRootProps()}
-                      className={`border-3 border-dashed rounded-3xl p-16 text-center transition-all cursor-pointer bg-white group
-                        ${isDragActive ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-200 hover:border-indigo-400 hover:bg-slate-50'}`}
+                      className={`border-2 border-dashed rounded-3xl p-16 text-center transition-all cursor-pointer glass-panel group
+                        ${isDragActive ? 'border-indigo-500 bg-indigo-50/50' : 'border-indigo-200 hover:border-indigo-400 hover:shadow-2xl hover:shadow-indigo-500/10'}`}
                     >
                       <input {...getInputProps()} />
-                      <div className="bg-indigo-50 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <Upload className="text-indigo-600 w-10 h-10" />
+                      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                        <Upload className="text-indigo-600 w-12 h-12 animate-float" />
                       </div>
                       <p className="text-xl font-semibold text-slate-900 mb-2">Drop your documents here</p>
                       <p className="text-slate-500 text-sm">Supports multi-page PDFs, JPG, PNG (Max 4MB total)</p>
                       <p className="mt-2 text-xs text-indigo-600 font-bold bg-indigo-50/50 py-1 px-3 rounded-full inline-block">Supports Multiple Files & Languages</p>
                     </div>
                   ) : (
-                    <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 overflow-hidden">
+                    <div className="glass-panel rounded-3xl p-8 shadow-2xl shadow-indigo-900/5 overflow-hidden">
                        <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
                           <div className="bg-indigo-600 p-3 rounded-xl shadow-lg shadow-indigo-100">
@@ -527,7 +527,7 @@ export default function App() {
                       <button
                         onClick={processFiles}
                         disabled={isProcessing}
-                        className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 text-white py-5 rounded-2xl font-bold text-lg transition-all shadow-lg shadow-indigo-200 active:scale-95"
+                        className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:from-slate-400 disabled:to-slate-500 text-white py-5 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-indigo-500/30 active:scale-95 group"
                       >
                         {isProcessing ? (
                           <>
@@ -537,7 +537,7 @@ export default function App() {
                         ) : (
                           <>
                             Extract & Analyze Documents
-                            <ChevronRight className="w-6 h-6" />
+                            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                           </>
                         )}
                       </button>
@@ -778,7 +778,7 @@ export default function App() {
             >
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Document History</h2>
+                  <h2 className="text-3xl font-display font-extrabold text-slate-900 tracking-tight mb-2">Document History</h2>
                   <p className="text-slate-500">View and manage your previously processed documents.</p>
                 </div>
                 
