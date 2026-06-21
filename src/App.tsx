@@ -121,11 +121,12 @@ export default function App() {
     setHistory(prev => [newItem, ...prev].slice(0, 50)); // Keep last 50 items
   };
 
-  const processFiles = async () => {
+  const processFiles = async (overrideMode?: "table" | "text") => {
     if (files.length === 0) return;
 
     setIsProcessing(true);
     setError(null);
+    const modeToUse = overrideMode || extractionMode;
 
     try {
       // Convert files to base64 — required for Vercel serverless (no raw stream for multer)
@@ -145,7 +146,7 @@ export default function App() {
         })
       );
 
-      const endpoint = extractionMode === "table" ? "/api/process" : "/api/extract-text";
+      const endpoint = modeToUse === "table" ? "/api/process" : "/api/extract-text";
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -169,7 +170,7 @@ export default function App() {
       }
 
       const result = await response.json();
-      if (extractionMode === "table") {
+      if (modeToUse === "table") {
         setData(result);
         setRawTextData(null);
         saveToHistory(result, files.length > 1 ? `${files[0].name} + ${files.length - 1} more` : files[0].name, files[0].type);
@@ -261,7 +262,7 @@ export default function App() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", exportFilename || "export.csv");
+    link.setAttribute("download", exportFilename || `Sheetify_${files[0]?.name.split('.')[0] || 'export'}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -274,10 +275,36 @@ export default function App() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(targetData, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);
-    downloadAnchorNode.setAttribute("download", exportFilename || "export.json");
+    downloadAnchorNode.setAttribute("download", exportFilename || `Sheetify_${files[0]?.name.split('.')[0] || 'export'}.json`);
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+  };
+
+  const exportToMarkdown = () => {
+    if (!rawTextData) return;
+    const blob = new Blob([rawTextData.text], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Sheetify_${files[0]?.name.split('.')[0] || 'extracted'}.md`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
+  const exportToText = () => {
+    if (!rawTextData) return;
+    const blob = new Blob([rawTextData.text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Sheetify_${files[0]?.name.split('.')[0] || 'extracted'}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   };
 
   const collateDocuments = () => {
@@ -362,28 +389,45 @@ export default function App() {
         </div>
         
         <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 w-full md:w-auto">
-          {data && activeTab === "workbench" && (
+          {(data || rawTextData) && activeTab === "workbench" && (
             <>
-              <div className="flex items-center bg-slate-100 p-1 rounded-xl mr-2">
-                <button 
-                  onClick={() => setWorkbenchTab("data")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${workbenchTab === 'data' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'}`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <TableIcon className="w-3.5 h-3.5" />
-                    Data Grid
-                  </div>
-                </button>
-                <button 
-                  onClick={() => setWorkbenchTab("insights")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${workbenchTab === 'insights' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'}`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                    Smart Insights
-                  </div>
-                </button>
-              </div>
+              {data && (
+                <div className="flex items-center bg-slate-100 p-1 rounded-xl mr-2">
+                  <button 
+                    onClick={() => setWorkbenchTab("data")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${workbenchTab === 'data' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'}`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <TableIcon className="w-3.5 h-3.5" />
+                      Data Grid
+                    </div>
+                  </button>
+                  <button 
+                    onClick={() => setWorkbenchTab("insights")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${workbenchTab === 'insights' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'}`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <TrendingUp className="w-3.5 h-3.5" />
+                      Smart Insights
+                    </div>
+                  </button>
+                </div>
+              )}
+
+              {/* Mode Switcher */}
+              <button
+                onClick={() => {
+                  const newMode = data ? "text" : "table";
+                  setExtractionMode(newMode);
+                  processFiles(newMode);
+                }}
+                disabled={isProcessing}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-50 rounded-lg text-sm font-bold transition-colors"
+              >
+                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : (data ? <FileText className="w-4 h-4" /> : <TableIcon className="w-4 h-4" />)}
+                <span className="hidden sm:inline">Switch to {data ? "Structured Text" : "Tabular Data"}</span>
+                <span className="sm:hidden">{data ? "Text" : "Table"}</span>
+              </button>
 
               <button
                 onClick={reset}
@@ -395,24 +439,39 @@ export default function App() {
 
               <div className="relative group/export">
                 <button
-                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all shadow-md active:scale-95"
+                  className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm active:scale-95"
                 >
                   {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                  Export Data
+                  Export {data ? "Data" : "Text"}
                 </button>
                 <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover/export:opacity-100 group-hover/export:visible transition-all z-50 overflow-hidden">
-                  <button onClick={() => exportToExcel()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
-                    <FileSpreadsheet className="w-4 h-4 text-green-600" />
-                    Excel Workbook
-                  </button>
-                  <button onClick={() => exportToCSV()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
-                    <FileCode className="w-4 h-4 text-blue-600" />
-                    CSV Document
-                  </button>
-                  <button onClick={() => exportToJSON()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
-                    <FileJson className="w-4 h-4 text-orange-600" />
-                    JSON Format
-                  </button>
+                  {data ? (
+                    <>
+                      <button onClick={() => exportToExcel()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
+                        <FileSpreadsheet className="w-4 h-4 text-green-600" />
+                        Excel Workbook
+                      </button>
+                      <button onClick={() => exportToCSV()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
+                        <FileCode className="w-4 h-4 text-blue-600" />
+                        CSV Document
+                      </button>
+                      <button onClick={() => exportToJSON()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
+                        <FileJson className="w-4 h-4 text-orange-600" />
+                        JSON Format
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => exportToMarkdown()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
+                        <FileText className="w-4 h-4 text-indigo-600" />
+                        Markdown Document
+                      </button>
+                      <button onClick={() => exportToText()} className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 flex items-center gap-3 text-slate-700">
+                        <FileText className="w-4 h-4 text-slate-600" />
+                        Plain Text (.txt)
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </>
