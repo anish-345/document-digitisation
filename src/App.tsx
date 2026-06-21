@@ -55,6 +55,26 @@ export default function App() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [workbenchTab, setWorkbenchTab] = useState<"data" | "insights">("data");
+  
+  const [loadingStep, setLoadingStep] = useState(0);
+  const loadingMessages = [
+    "Analyzing document structure...",
+    "Processing complex pages...",
+    "Running deep OCR engine...",
+    "Validating extracted fields...",
+    "Finalizing beautiful formatting..."
+  ];
+
+  useEffect(() => {
+    let interval: any;
+    if (isProcessing) {
+      setLoadingStep(0);
+      interval = setInterval(() => {
+        setLoadingStep(prev => Math.min(prev + 1, loadingMessages.length - 1));
+      }, 3500);
+    }
+    return () => clearInterval(interval);
+  }, [isProcessing]);
 
   // History States
   const [activeTab, setActiveTab] = useState<"workbench" | "history">("workbench");
@@ -584,14 +604,20 @@ export default function App() {
                       </div>
 
                       <button
-                        onClick={processFiles}
+                        onClick={() => processFiles()}
                         disabled={isProcessing}
-                        className="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 text-white py-4 rounded-xl font-semibold text-lg transition-all active:scale-[0.98] group"
+                        className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-500 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white py-4 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-[0.98] group relative overflow-hidden"
                       >
+                        {isProcessing && (
+                          <div 
+                            className="absolute left-0 bottom-0 h-1 bg-white/30 transition-all duration-1000 ease-out" 
+                            style={{ width: `${((loadingStep + 1) / loadingMessages.length) * 100}%` }}
+                          />
+                        )}
                         {isProcessing ? (
                           <>
                             <Loader2 className="w-6 h-6 animate-spin" />
-                            Synthesizing {files.length} Page{files.length > 1 ? 's' : ''}...
+                            <span className="min-w-[220px] text-left">{loadingMessages[loadingStep]}</span>
                           </>
                         ) : (
                           <>

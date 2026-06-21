@@ -25,7 +25,9 @@
 }
 
 .mesh-bg {
-  background-color: #fafafa;
-  background-image: radial-gradient(#e5e7eb 1.5px, transparent 1.5px);
-  background-size: 24px 24px;
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(240, 100%, 96%, 1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(280, 100%, 96%, 1) 0px, transparent 50%);
+  background-attachment: fixed;
 }
