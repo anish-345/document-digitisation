@@ -42,7 +42,7 @@ export default async function handler(req: any, res: any) {
     Output JSON strictly following the schema.`;
 
     const response = await genAI.models.generateContent({
-      model: "gemini-2.0-flash-lite-preview-02-05",
+      model: "gemini-2.0-flash",
       contents: [
         {
           role: "user",
