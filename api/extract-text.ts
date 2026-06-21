@@ -72,9 +72,11 @@ STRICT RULES:
     const status = error?.status || error?.code || 500;
     let message = error.message || "Failed to extract text";
     if (status === 429 || message.includes("RESOURCE_EXHAUSTED") || message.includes("quota")) {
-      message = "Gemini API quota exceeded. Please check your API key limits or try again later.";
+      message = `Gemini API quota exceeded. (Raw error: ${error.message})`;
     } else if (message.includes("API_KEY_INVALID") || message.includes("API key not valid")) {
-      message = "Invalid Gemini API key. Please check your GEMINI_API_KEY environment variable.";
+      message = `Invalid Gemini API key. (Raw error: ${error.message})`;
+    } else {
+      message = `${message} (Status: ${status})`;
     }
     res.status(typeof status === "number" ? status : 500).json({ error: message });
   }
