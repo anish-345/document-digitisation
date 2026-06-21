@@ -702,12 +702,25 @@ export default function App() {
                             </button>
                           </div>
                         </div>
-                        <div className="flex-1 p-6 overflow-auto">
-                          <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 min-h-full whitespace-pre-wrap font-mono text-[13px] leading-loose text-slate-800">
+                        <div className="flex-1 p-4 md:p-6 flex flex-col min-h-0">
+                          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col group relative focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-300 transition-all overflow-hidden">
                             {rawTextData.text ? (
-                              rawTextData.text
+                              <textarea
+                                value={rawTextData.text}
+                                onChange={(e) => {
+                                  const text = e.target.value;
+                                  setRawTextData({
+                                    ...rawTextData,
+                                    text,
+                                    wordCount: text.split(/\s+/).filter(w => w.length > 0).length,
+                                    charCount: text.length
+                                  });
+                                }}
+                                className="w-full h-full flex-1 resize-none bg-transparent whitespace-pre-wrap font-mono text-[13px] leading-loose text-slate-800 focus:outline-none p-6 md:p-8 custom-scrollbar"
+                                spellCheck={false}
+                              />
                             ) : (
-                              <div className="flex flex-col items-center justify-center text-center h-full text-slate-400">
+                              <div className="flex flex-col items-center justify-center text-center h-full text-slate-400 p-8">
                                 <FileText className="w-10 h-10 mb-2 opacity-50" />
                                 <p className="font-bold">No readable text found</p>
                                 <p className="text-xs max-w-[200px] mx-auto mt-1">The AI could not identify any text in the provided document.</p>
