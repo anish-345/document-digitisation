@@ -23,7 +23,8 @@ import {
   FileJson,
   FileCode,
   CheckCircle2,
-  Copy
+  Copy,
+  FileText
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
@@ -45,6 +46,8 @@ export default function App() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [data, setData] = useState<ExtractionResult | null>(null);
+  const [rawTextData, setRawTextData] = useState<{text: string, wordCount: number, charCount: number} | null>(null);
+  const [extractionMode, setExtractionMode] = useState<"table" | "text">("table");
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   
@@ -142,7 +145,8 @@ export default function App() {
         })
       );
 
-      const response = await fetch("/api/process", {
+      const endpoint = extractionMode === "table" ? "/api/process" : "/api/extract-text";
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ files: filePayloads }),
@@ -165,9 +169,16 @@ export default function App() {
       }
 
       const result = await response.json();
-      setData(result);
-      saveToHistory(result, files.length > 1 ? `${files[0].name} + ${files.length - 1} more` : files[0].name, files[0].type);
-      runAnalysis(result);
+      if (extractionMode === "table") {
+        setData(result);
+        setRawTextData(null);
+        saveToHistory(result, files.length > 1 ? `${files[0].name} + ${files.length - 1} more` : files[0].name, files[0].type);
+        runAnalysis(result);
+      } else {
+        setRawTextData(result);
+        setData(null);
+        // Note: we skip history/analysis for plain text mode to keep it simple
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Something went wrong while processing.");
@@ -418,7 +429,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {!data ? (
+              {(!data && !rawTextData) ? (
                 <motion.div
                   key="upload"
                   initial={{ opacity: 0, y: 20 }}
@@ -496,6 +507,23 @@ export default function App() {
                         </div>
                       </div>
 
+                      <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+                        <button
+                          onClick={() => setExtractionMode("table")}
+                          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-all ${extractionMode === "table" ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                          <TableIcon className="w-4 h-4" />
+                          Tabular Data
+                        </button>
+                        <button
+                          onClick={() => setExtractionMode("text")}
+                          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-all ${extractionMode === "text" ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                          <FileText className="w-4 h-4" />
+                          Handwritten Text
+                        </button>
+                      </div>
+
                       <button
                         onClick={processFiles}
                         disabled={isProcessing}
@@ -566,9 +594,36 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Right Panel: Interactive Table or AI Insights */}
+                  {/* Right Panel: Interactive Table or AI Insights or Raw Text */}
                   <div className="lg:w-2/3 bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden flex flex-col">
-                    {workbenchTab === 'data' ? (
+                    {rawTextData ? (
+                      <div className="flex-1 flex flex-col h-full bg-slate-50 relative">
+                        <div className="p-4 border-b bg-white flex items-center justify-between z-10 shadow-sm">
+                          <div className="flex items-center gap-2">
+                            <FileText className="w-5 h-5 text-indigo-600" />
+                            <p className="text-sm font-bold text-slate-700 uppercase tracking-wider">Transcribed Text</p>
+                          </div>
+                          <div className="flex items-center gap-6 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                            <span className="bg-slate-100 px-3 py-1 rounded-full">Words: {rawTextData.wordCount}</span>
+                            <span className="bg-slate-100 px-3 py-1 rounded-full">Chars: {rawTextData.charCount}</span>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(rawTextData.text);
+                                alert("Copied to clipboard!");
+                              }}
+                              className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
+                            >
+                              <Copy className="w-4 h-4" /> Copy
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex-1 p-6 overflow-auto">
+                          <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 min-h-full whitespace-pre-wrap font-mono text-[13px] leading-loose text-slate-800">
+                            {rawTextData.text}
+                          </div>
+                        </div>
+                      </div>
+                    ) : workbenchTab === 'data' && data ? (
                       <>
                         <div className="p-4 border-b bg-white flex items-center justify-between">
                           <div className="flex items-center gap-2">
