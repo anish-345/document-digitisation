@@ -39,7 +39,14 @@ export default async function handler(req: any, res: any) {
       4. HANDWRITING: Use expert-level OCR to decipher cursive and poor handwriting.
       5. FALLBACK: Never throw an error. If the document is nearly blank, output columns like "Field" and "Content" with whatever data you can find.
       
-      Output JSON strictly following the requested schema.`;
+      CRITICAL: You MUST output ONLY valid JSON using the following exact structure:
+      {
+        "columns": ["Column1", "Column2", "Column3"],
+        "rows": [
+          { "Column1": "Value1", "Column2": "Value2", "Column3": "Value3" },
+          { "Column1": "Value4", "Column2": "Value5", "Column3": "Value6" }
+        ]
+      }`;
 
       const parts = [
         { text: prompt },
@@ -80,23 +87,7 @@ export default async function handler(req: any, res: any) {
             body: JSON.stringify({
               contents: [{ role: "user", parts }],
               generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                  type: "OBJECT",
-                  properties: {
-                    columns: {
-                      type: "ARRAY",
-                      items: { type: "STRING" },
-                    },
-                    rows: {
-                      type: "ARRAY",
-                      items: {
-                        type: "OBJECT",
-                      },
-                    },
-                  },
-                  required: ["columns", "rows"],
-                }
+                responseMimeType: "application/json"
               }
             })
           });
