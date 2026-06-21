@@ -54,15 +54,14 @@ CRITICAL INSTRUCTIONS:
     const apiKey = process.env.GEMINI_API_KEY;
     
     const modelsToTry = [
-      "gemini-2.0-flash",
+      "gemini-2.0-flash-lite",
+      "gemini-flash-lite-latest",
+      "gemini-2.5-flash-lite",
+      "gemini-3-flash-preview",
+      "gemini-flash-latest",
       "gemini-2.5-flash",
-      "gemini-1.5-flash-8b",
-      "gemini-1.5-flash-002",
-      "gemini-1.5-flash-001",
-      "gemini-1.5-pro",
-      "gemini-1.5-pro-002",
-      "gemini-2.0-flash-lite-preview-02-05",
-      "gemini-pro"
+      "gemini-2.0-flash",
+      "gemini-3-pro-preview"
     ];
 
     let lastError = null;
