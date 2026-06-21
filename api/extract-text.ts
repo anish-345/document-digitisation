@@ -53,22 +53,52 @@ CRITICAL INSTRUCTIONS:
     ];
 
     const apiKey = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    
+    const modelsToTry = [
+      "gemini-2.0-flash",
+      "gemini-2.5-flash",
+      "gemini-1.5-flash-8b",
+      "gemini-1.5-flash-002",
+      "gemini-1.5-flash-001",
+      "gemini-1.5-pro",
+      "gemini-1.5-pro-002",
+      "gemini-2.0-flash-lite-preview-02-05",
+      "gemini-pro"
+    ];
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts }],
-      })
-    });
+    let lastError = null;
+    let responseData = null;
 
-    const responseData = await response.json();
+    for (const model of modelsToTry) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts }],
+          })
+        });
 
-    if (!response.ok) {
-      throw responseData.error || new Error("Failed to extract text");
+        const json = await response.json();
+        
+        if (response.ok) {
+          responseData = json;
+          break;
+        } else {
+          lastError = json.error || new Error(`Failed with model ${model}`);
+          console.log(`Model ${model} failed, trying next...`);
+        }
+      } catch (e) {
+        lastError = e;
+      }
+    }
+
+    if (!responseData) {
+      throw lastError || new Error("All fallback models failed.");
     }
 
     const outputText = responseData.candidates?.[0]?.content?.parts?.[0]?.text ?? '';

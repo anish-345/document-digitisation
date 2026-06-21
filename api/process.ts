@@ -51,41 +51,73 @@ export default async function handler(req: any, res: any) {
       ];
 
       const apiKey = process.env.GEMINI_API_KEY;
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      
+      // List of every possible model string to try until one succeeds
+      const modelsToTry = [
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
+        "gemini-1.5-flash-8b",
+        "gemini-1.5-flash-002",
+        "gemini-1.5-flash-001",
+        "gemini-1.5-pro",
+        "gemini-1.5-pro-002",
+        "gemini-2.0-flash-lite-preview-02-05",
+        "gemini-pro"
+      ];
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: "OBJECT",
-              properties: {
-                columns: {
-                  type: "ARRAY",
-                  items: { type: "STRING" },
-                },
-                rows: {
-                  type: "ARRAY",
-                  items: {
-                    type: "OBJECT",
+      let lastError = null;
+      let responseData = null;
+
+      for (const model of modelsToTry) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              contents: [{ role: "user", parts }],
+              generationConfig: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                  type: "OBJECT",
+                  properties: {
+                    columns: {
+                      type: "ARRAY",
+                      items: { type: "STRING" },
+                    },
+                    rows: {
+                      type: "ARRAY",
+                      items: {
+                        type: "OBJECT",
+                      },
+                    },
                   },
-                },
-              },
-              required: ["columns", "rows"],
-            }
+                  required: ["columns", "rows"],
+                }
+              }
+            })
+          });
+
+          const json = await response.json();
+          
+          if (response.ok) {
+            responseData = json;
+            break; // Success! Break out of the loop.
+          } else {
+            // Save the error but try the next model
+            lastError = json.error || new Error(`Failed with model ${model}`);
+            console.log(`Model ${model} failed, trying next...`);
           }
-        })
-      });
+        } catch (e) {
+          lastError = e;
+        }
+      }
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw responseData.error || new Error("Failed to process document");
+      if (!responseData) {
+        throw lastError || new Error("All fallback models failed.");
       }
 
       const outputText = responseData.candidates?.[0]?.content?.parts?.[0]?.text ?? '{"columns":[], "rows":[]}';
